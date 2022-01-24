@@ -6,6 +6,7 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   onAuthStateChanged,
+  User,
 } from "firebase/auth";
 import { useForm, SubmitHandler } from "react-hook-form";
 import styled from "styled-components";
@@ -16,6 +17,7 @@ import ErrorPage from "./pages/ErrorPage";
 import Dashboard from "./pages/Dashboard";
 import PrivateRoutes from "./components/PrivateRoutes";
 import AuthContext from "./auth/AuthContext";
+import firebaseConfig from "./config/firebase";
 
 type Inputs = {
   email: string;
@@ -37,16 +39,8 @@ const Layout = styled.div`
 
 function App() {
   const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState<User>();
   const navigate = useNavigate();
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyAV7gsK-PQXgZSXdOqSMXgjQsYW6UgYC7Q",
-    authDomain: "tweetz-d99d4.firebaseapp.com",
-    projectId: "tweetz-d99d4",
-    storageBucket: "tweetz-d99d4.appspot.com",
-    messagingSenderId: "703798625471",
-    appId: "1:703798625471:web:566d612f4980c91d22b20a",
-  };
 
   const firebaseApp = initializeApp(firebaseConfig);
   const auth = getAuth(firebaseApp);
@@ -55,10 +49,7 @@ function App() {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         console.log("user", user);
-        // User is signed in, see docs for a list of available properties
-        // https://firebase.google.com/docs/reference/js/firebase.User
-        const uid = user.uid;
-        // ...
+        setUser(user);
       } else {
         localStorage.removeItem("token");
       }
@@ -72,19 +63,14 @@ function App() {
 
     signInWithPopup(auth, provider)
       .then((result) => {
-        // This gives you a Google Access Token. You can use it to access the Google API.
         const credential = GoogleAuthProvider.credentialFromResult(result);
         const token = credential?.accessToken;
-        // The signed-in user info.
         const user = result.user;
-        console.log("user", user);
-        console.log("token", token);
 
+        setUser(user);
         localStorage.setItem("token", token!);
         navigate("/dashboard");
-
         setLoading(false);
-        // ...
       })
       .catch((error) => {
         // Handle Errors here.
@@ -95,7 +81,6 @@ function App() {
         // The AuthCredential type that was used.
         const credential = GoogleAuthProvider.credentialFromError(error);
         setLoading(false);
-        // ...
       });
   };
 
@@ -108,7 +93,7 @@ function App() {
           <Route path="/" element={<PrivateRoutes />}>
             <Route
               path="/dashboard"
-              element={<Dashboard firebaseApp={firebaseApp} />}
+              element={<Dashboard user={user} firebaseApp={firebaseApp} />}
             />
             <Route path="/error" element={<ErrorPage />} />
           </Route>
