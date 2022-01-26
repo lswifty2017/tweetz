@@ -16,13 +16,9 @@ import LandingPage from "./pages/LandingPage";
 import ErrorPage from "./pages/ErrorPage";
 import Dashboard from "./pages/Dashboard";
 import PrivateRoutes from "./components/PrivateRoutes";
-import AuthContext from "./auth/AuthContext";
 import firebaseConfig from "./config/firebase";
-
-type Inputs = {
-  email: string;
-  password: string;
-};
+import PermissionDenied from "./pages/PermissionDenied";
+import PageNotFound from "./pages/PageNotFound";
 
 const Layout = styled.div`
   background: white;
@@ -32,10 +28,14 @@ const Layout = styled.div`
   align-items: center;
   padding-top: 60px;
   padding: 20px;
-
-  h1 {
-  }
 `;
+
+const usersWithDashboardAccess = [
+  // Ideally this list of users would be stored in the cloud db, but for the sake of time we'll pop it here
+  "scott.waddell@antler.co",
+  "puneet.kaura@antler.co",
+  "l.swift94@gmail.com",
+];
 
 function App() {
   const [loading, setLoading] = useState(false);
@@ -66,10 +66,15 @@ function App() {
         const credential = GoogleAuthProvider.credentialFromResult(result);
         const token = credential?.accessToken;
         const user = result.user;
-
         setUser(user);
-        localStorage.setItem("token", token!);
-        navigate("/dashboard");
+
+        if (!hasDashboardPermission(user.email!)) {
+          navigate("/permission-denied");
+        } else {
+          localStorage.setItem("token", token!);
+          navigate("/dashboard");
+        }
+
         setLoading(false);
       })
       .catch((error) => {
@@ -83,6 +88,9 @@ function App() {
         setLoading(false);
       });
   };
+
+  const hasDashboardPermission = (email: string) =>
+    usersWithDashboardAccess.includes(email);
 
   return (
     <Layout>
@@ -101,7 +109,8 @@ function App() {
             path="/get-started"
             element={<LandingPage signupAction={signupWithGoogle} />}
           />
-          {/* <Route path="*" element={<PageNotFound />} /> */}
+          <Route path="/permission-denied" element={<PermissionDenied />} />
+          <Route path="*" element={<PageNotFound />} />
         </Routes>
       )}
     </Layout>
