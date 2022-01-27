@@ -2,7 +2,7 @@ name: Deploy to Firebase
 on:
   push:
     branches:
-      - github-actions
+      - main
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
