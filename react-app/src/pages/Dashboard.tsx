@@ -68,6 +68,7 @@ const Dashboard = ({ firebaseApp, user }: DashboardProps) => {
 
   useEffect(() => {
     (async () => await getAllTweets())();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getAllTweets = async () => {
