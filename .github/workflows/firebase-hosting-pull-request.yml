@@ -9,9 +9,11 @@ on:
 jobs:
   build_and_preview:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./react-app
     steps:
       - uses: actions/checkout@v2
-      - working-directory: ./react-app
       - run: npm ci && npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
