@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import dayjs from "dayjs";
 
 type TweetBoxProps = {
   tweet: string;
@@ -14,7 +13,7 @@ const Wrapper = styled.div`
   justify-content: space-between;
   width: 300px;
   height: 200px;
-  border: 1px solid black;
+  border: 1px solid ${({ color }) => color};
   border-radius: 5px;
   margin-bottom: 20px;
   margin-right: 10px;
@@ -42,7 +41,7 @@ const TweetBox = ({
   tweetStatus,
 }: TweetBoxProps) => {
   return (
-    <Wrapper>
+    <Wrapper color={tweetStatus === "published" ? "green" : "orange"}>
       <p className="tweet">{tweet}</p>
       <div className="tweet-info">
         <p className="tweet-info-text">Created by: {author}</p>

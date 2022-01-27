@@ -1,4 +1,4 @@
-import { FirebaseApp, initializeApp } from "firebase/app";
+import { FirebaseApp } from "firebase/app";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -90,10 +90,7 @@ const Dashboard = ({ firebaseApp, user }: DashboardProps) => {
   };
 
   const submitTweet = async () => {
-    const { displayName, email, emailVerified, isAnonymous, photoURL, uid } =
-      user || {};
-
-    console.log("email", email);
+    const { displayName, email } = user || {};
 
     try {
       const document = await setDoc(doc(db, "tweetz-collection", uuidv4()), {
@@ -104,10 +101,10 @@ const Dashboard = ({ firebaseApp, user }: DashboardProps) => {
         tweetStatus: "draft",
       });
 
+      console.log("document", document);
+
       await getAllTweets();
       setTweet("");
-
-      console.log("document", document);
     } catch (err) {
       console.log("err", err);
       setTweetError(
@@ -120,7 +117,6 @@ const Dashboard = ({ firebaseApp, user }: DashboardProps) => {
     if (event.target.value.length > 280) {
       setTweetError("Tweet exceeds max length of 280 characters.");
     } else if (event.target.value.length === 0) {
-      console.log("here");
       setTweet(event.target.value);
       setTweetError("Tweet must have at least 1 character.");
     } else {

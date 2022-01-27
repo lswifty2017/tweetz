@@ -1,10 +1,6 @@
-type ErrorPageProps = {};
-
-const ErrorPage = ({}: ErrorPageProps) => {
+const ErrorPage = () => {
   return (
-    <>
-      <h1>Error authenticating. Please contact support for further support.</h1>
-    </>
+    <h1>Error authenticating. Please contact support for further support.</h1>
   );
 };
 

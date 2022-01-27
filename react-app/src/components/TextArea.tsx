@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-type TextArea = {
+type TextAreaProps = {
   value: string;
   onChange: (event: any) => void;
 };
@@ -14,7 +14,7 @@ const TextAreaWrapper = styled.textarea`
   height: 200px;
 `;
 
-const TextArea = ({ value, onChange }: TextArea) => {
+const TextArea = ({ value, onChange }: TextAreaProps) => {
   return (
     <TextAreaWrapper
       value={value}
